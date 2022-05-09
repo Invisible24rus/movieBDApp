@@ -13,9 +13,17 @@ struct MovieResponce: Decodable {
 
 struct Movie: Decodable {
     let posterPath: String?
+    let overview: String
+    let movieName: String
+    let releaseDate: String
+    let voteAverage: Double
     
     private enum CodingKeys: String, CodingKey {
-      case posterPath = "poster_path"
+        case posterPath = "poster_path"
+        case overview
+        case movieName = "original_title"
+        case releaseDate = "release_date"
+        case voteAverage = "vote_average"
     }
     
 }
@@ -23,12 +31,3 @@ struct Movie: Decodable {
 extension Movie {
     var poster: URL? { posterPath?.asTmdbImageUrl() }
 }
-
-
-//extension Movie {
-//    static var spiderman: Movie {
-//        Movie(posterPath: "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg")
-//    }
-//}
-
-

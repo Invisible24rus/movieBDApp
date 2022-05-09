@@ -27,11 +27,4 @@ class MyImageView: UIImageView {
         }
         task?.resume()
     }
-
-    func prepareForReuse() {
-        task?.cancel()
-        task = nil
-        image = UIImage(systemName: "umbrella")
-    }
-    
 }

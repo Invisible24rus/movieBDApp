@@ -41,7 +41,7 @@ class PopularMovieCollectionViewCell: UICollectionViewCell {
     }
     
     func cellConfig(_ movie: Movie) {
-        moviePosterImage.setImage(movie.poster, placeholder: UIImage(systemName: "umbrella"))
+        moviePosterImage.setImage(movie.poster, placeholder: UIImage(systemName: "square.slash.fill"))
     }
     
 }
