@@ -9,17 +9,21 @@ import UIKit
 
 class MainViewController: UIViewController {
     
+    private let networkService = NetworkService()
+    
+    var items: [Movie] = []
+    
     private let movieSearchController = UISearchController(searchResultsController: nil)
     
     private var popularMovieCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
         layout.minimumLineSpacing = 15
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .white
         collectionView.showsHorizontalScrollIndicator = false
-//        collectionView.register(WeatherTempForecastCollectionViewCell.self, forCellWithReuseIdentifier: WeatherTempForecastCollectionViewCell.identifier)
+        collectionView.register(PopularMovieCollectionViewCell.self, forCellWithReuseIdentifier: PopularMovieCollectionViewCell.identifier)
         return collectionView
     }()
     
@@ -36,6 +40,21 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         searchMovieListTableView.dataSource = self
+        popularMovieCollectionView.dataSource = self
+        popularMovieCollectionView.delegate = self
+        networkService.fetchMovie(page: 1) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                switch result {
+                case .success(let popularMovies):
+                    self.items += popularMovies.results
+                case .failure(let error):
+                    fatalError(error.localizedDescription)
+                }
+                self.popularMovieCollectionView.reloadData()
+                print(self.items.count)
+            }
+        }
 //        movieSearchController.searchBar.delegate = self
     }
 
@@ -87,7 +106,7 @@ extension MainViewController: UISearchResultsUpdating {
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        30
+        items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -95,4 +114,27 @@ extension MainViewController: UITableViewDataSource {
         return cell
     }
 
+}
+
+//MARK: - UICollectionViewDataSource
+
+extension MainViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        items.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularMovieCollectionViewCell.identifier, for: indexPath) as! PopularMovieCollectionViewCell
+        if let cell = cell as? PopularMovieCollectionViewCell {
+            cell.cellConfig(items[indexPath.row])
+        }
+        return cell
+    }
+}
+
+//MARK: - UICollectionViewDelegate
+extension MainViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 150, height: 200)
+    }
 }
