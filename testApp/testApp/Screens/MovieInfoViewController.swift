@@ -11,6 +11,9 @@ class MovieInfoViewController: UIViewController {
     
     let movieModel: Movie
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
     init(movieModel: Movie) {
         self.movieModel = movieModel
         super.init(nibName: nil, bundle: nil)
@@ -23,13 +26,12 @@ class MovieInfoViewController: UIViewController {
     private let moviePosterImage: MyImageView = {
         let image = MyImageView()
         image.contentMode = .scaleAspectFit
-        image.layer.cornerRadius = 10
         return image
     }()
     
     private var movieNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Добро dsadsadasdasdsadasd asdasd asd asd asd asd sad "
+        label.text = ""
         label.font = UIFont.boldSystemFont(ofSize: 24)
         label.textColor = .black
         label.numberOfLines = 10
@@ -38,7 +40,7 @@ class MovieInfoViewController: UIViewController {
     
     private var movieDateRealseLabel: UILabel = {
         let label = UILabel()
-        label.text = "30.08.2020"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .black
         label.sizeToFit()
@@ -47,7 +49,7 @@ class MovieInfoViewController: UIViewController {
     
     private var movieScoreLabel: UILabel = {
         let label = UILabel()
-        label.text = "5.45"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .black
         return label
@@ -55,9 +57,9 @@ class MovieInfoViewController: UIViewController {
     
     private var movieInfoLabel: UILabel = {
         let label = UILabel()
-        label.text = "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences."
+        label.text = ""
         label.sizeToFit()
-        label.numberOfLines = 10
+        label.numberOfLines = 100
         label.font = UIFont.systemFont(ofSize: 18)
         label.textColor = .black
         return label
@@ -71,23 +73,39 @@ class MovieInfoViewController: UIViewController {
     }
     
     func setupModel() {
-            moviePosterImage.setImage(movieModel.poster)
-            movieNameLabel.text = movieModel.movieName
-            movieDateRealseLabel.text = movieModel.releaseDate
-            movieScoreLabel.text = "\(movieModel.voteAverage)"
+        moviePosterImage.setImage(movieModel.poster)
+        movieNameLabel.text = movieModel.movieName
+        movieDateRealseLabel.text = movieModel.releaseDate
+        movieScoreLabel.text = "\(movieModel.voteAverage)"
+        movieInfoLabel.text = movieModel.overview
     }
 }
-
 
 private extension MovieInfoViewController {
     
     func setupViews() {
         view.backgroundColor = .systemGray5
+        scrollView.showsVerticalScrollIndicator = false
         
-        view.addSubviewsForAutoLayout([moviePosterImage, movieNameLabel, movieDateRealseLabel, movieScoreLabel, movieInfoLabel])
+        view.addSubviewForAutoLayout(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubviewsForAutoLayout([moviePosterImage, movieNameLabel, movieDateRealseLabel, movieScoreLabel, movieInfoLabel])
         
         NSLayoutConstraint.activate([
-            moviePosterImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            moviePosterImage.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 10),
             moviePosterImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             moviePosterImage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             moviePosterImage.heightAnchor.constraint(equalToConstant: 300),
@@ -105,7 +123,7 @@ private extension MovieInfoViewController {
             movieInfoLabel.topAnchor.constraint(equalTo: movieScoreLabel.bottomAnchor, constant: 20),
             movieInfoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             movieInfoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-//            movieInfoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            movieInfoLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
 }

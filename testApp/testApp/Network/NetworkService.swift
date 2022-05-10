@@ -12,18 +12,26 @@ typealias JSONDict = [String: Any]
 class NetworkService {
     let baseURL = "https://api.themoviedb.org/3/"
     let apiKey = "3ffeca8b167f6d54cb8099af3bda45ea"
-    let endpoint = "movie/popular"
+    let fetchEndpoint = "movie/popular"
+    let searchEndpoint = "search/movie"
     
     func fetchMovie(page: Int, completion: @escaping (Result<MovieResponce, NetworkError>) -> Void) {
-        getData(endpoint: endpoint,
+        getData(endpoint: fetchEndpoint,
                 parameters: ["api_key": apiKey,
                              "language": "en-US",
                              "page": page],
                 comletion: completion)
     }
     
+    func searchMovie(query: String, completion: @escaping (Result<MovieResponce, NetworkError>) -> Void) {
+        getData(endpoint: searchEndpoint,
+                parameters: ["api_key": apiKey,
+                             "language": "en-US",
+                             "query": query,
+                             "include_adult": false],
+                comletion: completion)
+    }
 }
-
 
 private extension NetworkService {
     

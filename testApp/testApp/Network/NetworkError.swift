@@ -20,7 +20,7 @@ enum NetworkError: Error, LocalizedError {
         case .badJSON:
             return "Can't load data"
         case .notFound:
-            return "Can't find city. Please check the name and try again"
+            return "Not found"
         }
     }
 }

@@ -21,11 +21,10 @@ struct Movie: Decodable {
     private enum CodingKeys: String, CodingKey {
         case posterPath = "poster_path"
         case overview
-        case movieName = "original_title"
+        case movieName = "title"
         case releaseDate = "release_date"
         case voteAverage = "vote_average"
     }
-    
 }
 
 extension Movie {
